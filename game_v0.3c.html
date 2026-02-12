@@ -292,7 +292,7 @@
             } else {
                 this.confidence -= 34;
                 this.updateUI();
-                feedback.innerHTML = "<span style='color:var(--error-red)'>✖ INCORRECT. Auditors are concerned.</span>";
+                feedback.innerHTML = "<span style='color:var(--error-red)'>✖ INCORRECT. Please try again.</span>";
                 if (this.confidence <= 0) this.gameOver();
             }
         },
