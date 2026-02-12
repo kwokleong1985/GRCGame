@@ -277,7 +277,7 @@
 
         loadLevel() {
             const data = gameData[this.currentLevel];
-            document.getElementById('level-tag').innerText = `PHASE 0${this.currentLevel + 1} / DATA ANALYSIS`;
+            document.getElementById('level-tag').innerText = `Level 0${this.currentLevel + 1}`;
             document.getElementById('scenario-title').innerText = data.title;
             document.getElementById('scenario-desc').innerText = data.desc;
             document.getElementById('artefact-display').innerHTML = data.artefactHtml;
