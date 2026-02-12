@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Lens: GRC Awareness</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --accent-blue: #38bdf8;
+            --error-red: #ef4444;
+            --success-green: #22c55e;
+            --paper-white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Dashboard Header */
+        header {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+        }
+
+        .meter-container {
+            width: 300px;
+            background: #334155;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #confidence-bar {
+            width: 100%;
+            height: 100%;
+            background: var(--success-green);
+            transition: width 0.5s ease, background-color 0.5s ease;
+        }
+
+        /* Main Game Area */
+        main {
+            max-width: 900px;
+            width: 95%;
+            margin-top: 2rem;
+        }
+
+        .instructions {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* The Artefact (Document) */
+        .artefact-container {
+            background: var(--paper-white);
+            color: #000;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            min-height: 500px;
+            position: relative;
+            cursor: crosshair;
+        }
+
+        .doc-header {
+            border-bottom: 2px solid #000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .hotspot {
+            background: transparent;
+            border: 2px dashed transparent;
+            transition: border 0.2s;
+        }
+
+        .hotspot:hover {
+            border: 2px dashed var(--accent-blue);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        /* Diagnostic Modal */
+        #diagnostic-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 400px;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #334155;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: #475569;
+        }
+
+        #feedback-area {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div><strong>Audit Lens:</strong> QA Lead Mode</div>
+    <div style="text-align: right;">
+        <div>Compliance Confidence</div>
+        <div class="meter-container">
+            <div id="confidence-bar"></div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="instructions">
+        <h2>Scenario: The Database Migration</h2>
+        <p>Review the Change Request form below. Click on the area that reveals a GRC failure.</p>
+    </div>
+
+    <div class="artefact-container" id="document">
+        <div class="doc-header">
+            <h1 style="margin:0;">CHANGE REQUEST FORM #8821</h1>
+            <p>Status: <span style="color: green; font-weight: bold;">CLOSED / IMPLEMENTED</span></p>
+        </div>
+        
+        <table style="width:100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding:10px; border: 1px solid #ccc;"><strong>Requester:</strong> Sarah Jenkins</td>
+                <td style="padding:10px; border: 1px solid #ccc;"><strong>Dept:</strong> Engineering</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding:10px; border: 1px solid #ccc;">
+                    <strong>Description:</strong> Migrating Production DB to v12.4. Includes data masking for PII.
+                </td>
+            </tr>
+        </table>
+
+        <h3 style="margin-top:40px;">Implementation Details</h3>
+        <p><strong>Actual Date of Implementation:</strong> October 12, 2025</p>
+
+        <div class="hotspot" id="audit-trigger" style="margin-top:40px; padding: 15px; border-radius: 4px;">
+            <h3 style="margin:0;">Approvals</h3>
+            <p><strong>QA Manager Approval:</strong> Verified - Oct 14, 2025</p>
+            <p><strong>Security Sign-off:</strong> Verified - Oct 14, 2025</p>
+        </div>
+
+        <div style="margin-top: 40px; color: #999; font-style: italic;">
+            <p>Note: Rollback plan attached in Appendix A.</p>
+        </div>
+    </div>
+</main>
+
+<div id="diagnostic-overlay">
+    <div class="modal">
+        <h3>Lapse Detected!</h3>
+        <p>Why is this an audit failure?</p>
+        <button class="option-btn" onclick="checkAnswer('A')">A) Incorrect Scope Definition</button>
+        <button class="option-btn" onclick="checkAnswer('B')">B) Retrospective Approval (Implemented before signed)</button>
+        <button class="option-btn" onclick="checkAnswer('C')">C) Missing Risk Rating</button>
+        <button class="option-btn" onclick="checkAnswer('D')">D) Unauthorized Requester</button>
+        <div id="feedback-area"></div>
+        <button id="next-btn" class="option-btn hidden" style="background: var(--success-green);" onclick="location.reload()">Next Challenge</button>
+    </div>
+</div>
+
+<script>
+    let confidence = 100;
+    const hotspot = document.getElementById('audit-trigger');
+    const overlay = document.getElementById('diagnostic-overlay');
+    const feedback = document.getElementById('feedback-area');
+    const confBar = document.getElementById('confidence-bar');
+
+    // Show modal when hotspot is clicked
+    hotspot.addEventListener('click', () => {
+        overlay.style.display = 'flex';
+    });
+
+    function checkAnswer(choice) {
+        if (choice === 'B') {
+            feedback.innerHTML = "Correct! The implementation date (Oct 12) is earlier than the approval date (Oct 14). This is a 'Time-Travel' lapse.";
+            feedback.style.color = "var(--success-green)";
+            document.getElementById('next-btn').classList.remove('hidden');
+        } else {
+            confidence -= 33;
+            updateMeter();
+            feedback.innerHTML = "Incorrect. That is a best practice, but not the primary lapse shown here.";
+            feedback.style.color = "var(--error-red)";
+            
+            if (confidence <= 0) {
+                alert("GAME OVER: Your Compliance Confidence has hit zero. The auditors have revoked your license.");
+                location.reload();
+            }
+        }
+    }
+
+    function updateMeter() {
+        confBar.style.width = confidence + "%";
+        if (confidence < 40) confBar.style.background = "var(--error-red)";
+    }
+</script>
+
+</body>
+</html>
